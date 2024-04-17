@@ -1,10 +1,22 @@
 import MainContent from "@/components/content";
-import { SignIn } from "@/components/sign-in";
+import LandingPage from "@/components/landingPage";
+import { auth } from "@/utils/auth";
 
-export default function Home() {
-  return (
-    <div>
-      <MainContent />
-    </div>
-  );
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: { search: string };
+}) {
+  const searchItem = searchParams.search;
+  const session = await auth();
+
+  if (!session) {
+    return <LandingPage />;
+  } else {
+    return (
+      <div>
+        <MainContent searchItem={searchItem} />
+      </div>
+    );
+  }
 }

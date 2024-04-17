@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "@/components/Navbar";
 import NextTopLoader from "nextjs-toploader";
 import { SessionProvider } from "next-auth/react";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,6 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <SessionProvider>
         <body className={inter.className}>
+          <Toaster />
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

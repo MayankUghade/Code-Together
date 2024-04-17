@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import {
   Call,
   CallControls,
+  CallParticipantsList,
   SpeakerLayout,
   StreamCall,
   StreamTheme,
@@ -13,6 +14,7 @@ import {
 } from "@stream-io/video-react-sdk";
 import { useEffect, useState } from "react";
 import { genrateVideoToken } from "./actions";
+import { useRouter } from "next/navigation";
 
 // Instead of accessing process.env directly, provide apiKey and token as props or use Next.js environment variables
 const apiKey = "ypraahkgvgz4";
@@ -20,6 +22,10 @@ const apiKey = "ypraahkgvgz4";
 export function CodeTogetherVideo({ roomId }: { roomId: string }) {
   const { data: session } = useSession();
   const userId = session?.user?.id;
+  const userName = session?.user?.name;
+  const userImage = session?.user?.image;
+
+  const router = useRouter();
 
   const [client, setClient] = useState<StreamVideoClient | null>(null);
   const [call, setCall] = useState<Call | null>(null);
@@ -31,7 +37,7 @@ export function CodeTogetherVideo({ roomId }: { roomId: string }) {
 
     const client = new StreamVideoClient({
       apiKey,
-      user: { id: userId || "" },
+      user: { id: userId || "", name: userName || "", image: userImage || "" },
       tokenProvider: () => genrateVideoToken(),
     });
 
@@ -42,8 +48,10 @@ export function CodeTogetherVideo({ roomId }: { roomId: string }) {
     setCall(call);
 
     return () => {
-      call.leave();
-      client.disconnectUser();
+      call
+        .leave()
+        .then(() => client.disconnectUser())
+        .catch(console.error);
     };
   }, [roomId, session]);
 
@@ -54,7 +62,12 @@ export function CodeTogetherVideo({ roomId }: { roomId: string }) {
         <StreamTheme>
           <StreamCall call={call}>
             <SpeakerLayout />
-            <CallControls />
+            <CallControls
+              onLeave={() => {
+                router.push("/");
+              }}
+            />
+            <CallParticipantsList onClose={() => undefined} />
           </StreamCall>
         </StreamTheme>
       </StreamVideo>

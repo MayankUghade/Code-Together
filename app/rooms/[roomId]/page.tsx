@@ -1,12 +1,17 @@
 import { roomInfo } from "@/app/data-access/fetchData";
-import TagsList, { SplitTags } from "@/components/TagsList";
+import TagsList from "@/components/TagsList";
+import { SplitTags } from "@/utils/splitTags";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { CodeTogetherVideo } from "./video-player";
+import { auth } from "@/utils/auth";
 
 export default async function RoomPage(props: { params: { roomId: string } }) {
   const roomId = props.params.roomId;
   const room = await roomInfo(roomId);
+
+  const session = await auth();
+  if (!session) return <div>Not authenticated</div>;
 
   if (!room) {
     return (

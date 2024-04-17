@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -7,40 +6,30 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "./ui/button";
-import { fetchRoomData } from "@/app/data-access/fetchData";
+import { Button } from "@/components/ui/button";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import TagsList from "./TagsList";
+import TagsList from "@/components/TagsList";
 import { SplitTags } from "@/utils/splitTags";
-import SearchBar from "./SearchBar";
+import { getYouRoomData } from "./actions";
+import DeleteRoom from "./Delete";
+import Image from "next/image";
+import { auth } from "@/utils/auth";
+import { Pencil } from "lucide-react";
+import Link from "next/link";
 
-export default async function MainContent({
-  searchItem,
-}: {
-  searchItem: string;
-}) {
-  const roomData = await fetchRoomData(searchItem);
+export default async function page() {
+  const roomData = await getYouRoomData();
+  const session = await auth();
+  if (!session) return <div>Not authenticated</div>;
 
   return (
     <div className="flex flex-col gap-5 md:py-12 md:p-5 p-3 md:mx-10">
-      <div className="w-full flex items-center justify-center">
-        <Link href="/your-rooms">
-          <Button variant="outline">Your rooms</Button>
-        </Link>
-      </div>
       <div className="flex justify-between items-center gap-3 mx-5">
-        <h1 className="sm:text-3xl text-lg font-bold">Explore Rooms</h1>
+        <h1 className="sm:text-3xl text-lg font-bold">Your rooms</h1>
         <Button>
           <Link href="/create-room">Create Room</Link>
         </Button>
       </div>
-
-      <h1 className="dark:text-gray-500 text-gray-400 text-center sm:text-lg text-sm">
-        Discover numerous developer rooms established by various developers
-        here. Join any of these rooms to commence learning and collaborating.
-      </h1>
-
-      <SearchBar />
 
       <div className="grid grid-cols-3 gap-4">
         {roomData.map((item) => {
@@ -66,15 +55,35 @@ export default async function MainContent({
                   )}
                 </div>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="flex items-center justify-between">
                 <Button asChild>
                   <Link href={`/rooms/${item.id}`}>Join Room</Link>
                 </Button>
+
+                <div className="flex items-center gap-3">
+                  <DeleteRoom roomId={item.id} />
+                  <Link href={`/edit-room/${item.id}`}>
+                    <Pencil className="text-blue-500" />
+                  </Link>
+                </div>
               </CardFooter>
             </Card>
           );
         })}
       </div>
+
+      {roomData.length === 0 && (
+        <div className="flex flex-col gap-4 justify-center items-center mt-24">
+          <Image
+            src="/noData.svg"
+            width="300"
+            height="300"
+            alt="no data image"
+          />
+
+          <h2 className="text-2xl">No rooms created yet</h2>
+        </div>
+      )}
     </div>
   );
 }
