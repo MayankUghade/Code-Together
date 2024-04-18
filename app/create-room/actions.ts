@@ -14,7 +14,7 @@ interface roomTypes {
 export async function createRoomAction(roomData: roomTypes) {
   const session = await auth();
 
-  const userId = session?.user?.id;
+  const userId = session?.user?.id as string;
 
   await prisma.room.create({ data: { userId, ...roomData } });
 

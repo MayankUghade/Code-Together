@@ -42,7 +42,7 @@ export default function EditRoomForm({ room }: { room: any }) {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await editRoomAction(values, room.id);
+    await editRoomAction({ ...values, id: room.id }, room.id);
 
     toast({
       title: "Room Updated",
