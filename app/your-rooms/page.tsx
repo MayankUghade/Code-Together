@@ -24,7 +24,7 @@ export default async function page() {
 
   return (
     <div className="flex flex-col gap-5 md:py-12 md:p-5 p-3 md:mx-10">
-      <div className="flex justify-between items-center gap-3 mx-5">
+      <div className="flex justify-between p-5 items-center gap-3 mx-5">
         <h1 className="sm:text-3xl text-lg font-bold">Your rooms</h1>
         <Button>
           <Link href="/create-room">Create Room</Link>
