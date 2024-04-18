@@ -57,7 +57,7 @@ export default function SearchBar() {
                 <Input
                   {...field}
                   placeholder="Search for tags to join the room"
-                  className="w-[480px] p-3"
+                  className="md:w-[440px] sm:w-[300px] w-[220px] p-3"
                 />
               </FormControl>
               <FormMessage />
